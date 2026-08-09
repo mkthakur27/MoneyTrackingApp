@@ -1,1 +1,76 @@
+# Money Tracking App
+
+A simple money tracking application with a Next.js frontend and a Java Spring Boot backend.
+
+## Features
+
+- Track spend entries with description, category, amount, date, and notes
+- Basic categories included: Food, Transport, Utilities, Shopping, Health, Other
+- Profile-level currency denomination (symbol + code) used across the app
+- Reports tab: category-wise and month-wise expenditure with bar charts
+- Budgets: set a monthly or weekly budget per category and track spend against it
+- Recurring/default expenses: define monthly or weekly defaults and log them in one click
+- In-memory backend storage (no database required)
+- Tabbed, mobile-responsive frontend UI
+- Clean backend architecture with model, repository, and service layers
+
+## Backend
+
+### Run backend
+
+1. Open a terminal in `backend`
+2. Run:
+   ```bash
+   mvn clean spring-boot:run
+   ```
+3. Backend starts on `http://localhost:8080`
+
+### API
+
+Entries:
+
+- `GET /api/entries`
+- `POST /api/entries`
+- `PUT /api/entries/{id}`
+- `DELETE /api/entries/{id}`
+- `DELETE /api/entries`
+
+Profile (currency denomination):
+
+- `GET /api/profile`
+- `PUT /api/profile`
+
+Budgets:
+
+- `GET /api/budgets`
+- `POST /api/budgets`
+- `PUT /api/budgets/{id}`
+- `DELETE /api/budgets/{id}`
+
+Recurring / default expenses:
+
+- `GET /api/recurring`
+- `POST /api/recurring`
+- `PUT /api/recurring/{id}`
+- `DELETE /api/recurring/{id}`
+
+## Frontend
+
+### Run frontend
+
+1. Open a terminal in `frontend`
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run development server:
+   ```bash
+   npm run dev
+   ```
+4. Open browser at `http://localhost:3000`
+
+## Notes
+
+- The frontend proxies API requests to the backend using `BACKEND_URL` if needed.
+- No database is used, so all entries reset when the backend restarts.
 
