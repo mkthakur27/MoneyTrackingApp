@@ -25,6 +25,13 @@ A simple money tracking application with a Next.js frontend and a Java Spring Bo
    ```
 3. Backend starts on `http://localhost:8080`
 
+### Swagger / OpenAPI
+
+Interactive API docs are available after the backend starts:
+
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
 ### API
 
 Entries:
