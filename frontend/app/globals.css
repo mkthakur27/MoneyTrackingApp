@@ -1,0 +1,283 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
+  background: #f1f5f9;
+  color: #111827;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+.page-container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.app-header {
+  margin-bottom: 18px;
+}
+
+.app-header h1 {
+  margin: 0 0 6px;
+}
+
+.app-header p {
+  margin: 0;
+  color: #475569;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  margin-bottom: 18px;
+}
+
+.tab {
+  flex: 1;
+  min-width: 90px;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: transparent;
+  color: #475569;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab:hover {
+  background: #f1f5f9;
+}
+
+.tab.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+}
+
+.card h2 {
+  margin: 0 0 14px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+}
+
+label.full-width {
+  grid-column: 1 / -1;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 6px;
+  font-size: 1rem;
+  background: #ffffff;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+button.ghost {
+  background: #f1f5f9;
+  color: #b91c1c;
+}
+
+button.ghost:hover {
+  background: #e2e8f0;
+}
+
+.pill {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 700;
+}
+
+.muted {
+  color: #64748b;
+  margin: 4px 0 0;
+}
+
+.note {
+  margin: 6px 0 0;
+  color: #334155;
+  font-style: italic;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 8px;
+}
+
+.success {
+  color: #047857;
+  margin-top: 8px;
+}
+
+.entry-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.entry-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.entry-main {
+  min-width: 0;
+}
+
+.entry-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.amount {
+  font-weight: 700;
+}
+
+.amount.over {
+  color: #b91c1c;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 600;
+}
+
+.bar-track {
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+.bar-fill.over {
+  background: #dc2626;
+}
+
+.row-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .page-container {
+    padding: 16px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .entry-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .entry-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
