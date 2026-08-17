@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import { useState } from 'react';
-import { fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
+import { categoryLabel, fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
 
 const emptyForm = () => ({
   description: '',
@@ -66,7 +66,7 @@ export default function RecurringTab() {
   return (
     <div className="stack">
       <section className="card">
-        <h2>Add a Default / Recurring Expense</h2>
+        <h2>🔁 Add a Recurring Expense</h2>
         <p className="muted">
           Set expenses that repeat every month or week, then log them to your entries with one click.
         </p>
@@ -84,7 +84,7 @@ export default function RecurringTab() {
             <select value={form.category} onChange={change('category')}>
               {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category}
+                  {categoryLabel(category)}
                 </option>
               ))}
             </select>
@@ -123,7 +123,7 @@ export default function RecurringTab() {
       </section>
 
       <section className="card">
-        <h2>Recurring Expenses</h2>
+        <h2>📌 Recurring Expenses</h2>
         {message && <p className="success">{message}</p>}
         {recurring.length === 0 ? (
           <p className="muted">No recurring expenses yet.</p>
@@ -134,17 +134,17 @@ export default function RecurringTab() {
                 <div className="entry-main">
                   <strong>{item.description}</strong>
                   <p className="muted">
-                    {item.category} • {item.period.toLowerCase()}
+                    {categoryLabel(item.category)} • {item.period.toLowerCase()}
                   </p>
                   {item.note && <p className="note">{item.note}</p>}
                 </div>
                 <div className="entry-right">
                   <span className="amount">{formatMoney(symbol, item.amount)}</span>
                   <button type="button" onClick={() => logAsEntry(item)}>
-                    Log
+                    ➕ Log
                   </button>
-                  <button className="ghost" onClick={() => deleteRecurring(item.id)}>
-                    Delete
+                  <button className="danger compact" onClick={() => deleteRecurring(item.id)}>
+                    🗑️ Delete
                   </button>
                 </div>
               </li>

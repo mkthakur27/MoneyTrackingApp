@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: money-tracking-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-moneytracking}
+      POSTGRES_USER: ${POSTGRES_USER:-moneytracker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env file}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - money-tracking-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-moneytracker} -d ${POSTGRES_DB:-moneytracking}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  money-tracking-postgres-data:
