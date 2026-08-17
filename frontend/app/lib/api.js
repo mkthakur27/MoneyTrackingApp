@@ -10,6 +10,43 @@ export const fetcher = (url) =>
 
 export const categories = ['Food', 'Transport', 'Utilities', 'Shopping', 'Health', 'Other'];
 
+export const categoryEmojis = {
+  Food: '🍽️',
+  Transport: '🚗',
+  Utilities: '💡',
+  Shopping: '🛍️',
+  Health: '💊',
+  Other: '📦',
+};
+
+export function categoryLabel(category) {
+  return `${categoryEmojis[category] || '💸'} ${category}`;
+}
+
+export async function apiRequest(url, options = {}) {
+  const response = await fetch(url, options);
+  const text = await response.text();
+  let data = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+  }
+
+  if (!response.ok) {
+    const message =
+      data?.message ||
+      (typeof data === 'string' ? data : '') ||
+      `Request failed with status ${response.status}`;
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 export const currencyPresets = [
   { code: 'USD', symbol: '$' },
   { code: 'EUR', symbol: '€' },

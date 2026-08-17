@@ -3,6 +3,7 @@ package com.moneytrackingapp.service;
 import com.moneytrackingapp.model.Profile;
 import com.moneytrackingapp.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -13,12 +14,15 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional
     public Profile getProfile() {
-        return repository.get();
+        return repository.findById(Profile.SINGLETON_ID).orElseGet(() -> repository.save(new Profile()));
     }
 
     @Override
+    @Transactional
     public Profile updateProfile(Profile profile) {
+        profile.setId(Profile.SINGLETON_ID);
         return repository.save(profile);
     }
 }

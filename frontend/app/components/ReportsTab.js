@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import { fetcher, formatMoney, monthKey, monthLabel, useCurrencySymbol } from '../lib/api';
+import { categoryLabel, fetcher, formatMoney, monthKey, monthLabel, useCurrencySymbol } from '../lib/api';
 
 function BarRow({ label, value, max, symbol }) {
   const width = max > 0 ? Math.round((value / max) * 100) : 0;
@@ -48,7 +48,7 @@ export default function ReportsTab() {
   if (entries.length === 0) {
     return (
       <div className="card">
-        <h2>Reports</h2>
+        <h2>📊 Reports</h2>
         <p className="muted">Add some entries to see reports.</p>
       </div>
     );
@@ -58,18 +58,24 @@ export default function ReportsTab() {
     <div className="stack">
       <section className="card">
         <div className="section-header">
-          <h2>Category-wise Expenditure</h2>
+          <h2>📊 Spending by Category</h2>
           <span className="pill">Total: {formatMoney(symbol, total)}</span>
         </div>
         <div className="bars">
           {categoryRows.map(([category, value]) => (
-            <BarRow key={category} label={category} value={value} max={maxCategory} symbol={symbol} />
+            <BarRow
+              key={category}
+              label={categoryLabel(category)}
+              value={value}
+              max={maxCategory}
+              symbol={symbol}
+            />
           ))}
         </div>
       </section>
 
       <section className="card">
-        <h2>Month-wise Expenditure</h2>
+        <h2>📅 Spending by Month</h2>
         <div className="bars">
           {monthRows.map(([key, value]) => (
             <BarRow key={key} label={monthLabel(key)} value={value} max={maxMonth} symbol={symbol} />
