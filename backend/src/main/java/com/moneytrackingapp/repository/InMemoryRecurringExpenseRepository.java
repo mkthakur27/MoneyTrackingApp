@@ -15,13 +15,16 @@ public class InMemoryRecurringExpenseRepository implements RecurringExpenseRepos
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override
-    public List<RecurringExpense> findAll() {
-        return new ArrayList<>(storage.values());
+    public List<RecurringExpense> findAllByUserId(Long userId) {
+        return storage.values().stream()
+                .filter(item -> userId.equals(item.getUserId()))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public Optional<RecurringExpense> findById(Long id) {
-        return Optional.ofNullable(storage.get(id));
+    public Optional<RecurringExpense> findByIdAndUserId(Long id, Long userId) {
+        return Optional.ofNullable(storage.get(id))
+                .filter(item -> userId.equals(item.getUserId()));
     }
 
     @Override
@@ -34,7 +37,7 @@ public class InMemoryRecurringExpenseRepository implements RecurringExpenseRepos
     }
 
     @Override
-    public void deleteById(Long id) {
-        storage.remove(id);
+    public void deleteByIdAndUserId(Long id, Long userId) {
+        findByIdAndUserId(id, userId).ifPresent(item -> storage.remove(item.getId()));
     }
 }

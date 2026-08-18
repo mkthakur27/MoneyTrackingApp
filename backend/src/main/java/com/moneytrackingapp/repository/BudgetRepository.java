@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BudgetRepository {
-    List<Budget> findAll();
-    Optional<Budget> findById(Long id);
+    List<Budget> findAllByUserId(Long userId);
+    Optional<Budget> findByIdAndUserId(Long id, Long userId);
     Budget save(Budget budget);
-    void deleteById(Long id);
+    void deleteByIdAndUserId(Long id, Long userId);
 }

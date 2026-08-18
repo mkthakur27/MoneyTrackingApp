@@ -1,5 +1,6 @@
 package com.moneytrackingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +9,9 @@ import java.time.LocalDate;
 
 public class SpendEntry {
     private Long id;
+
+    @JsonIgnore
+    private Long userId;
 
     @NotBlank(message = "Description is required")
     private String description;
@@ -33,6 +37,14 @@ public class SpendEntry {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getDescription() {

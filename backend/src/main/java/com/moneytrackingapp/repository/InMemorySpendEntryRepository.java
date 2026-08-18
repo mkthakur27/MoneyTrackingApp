@@ -15,13 +15,16 @@ public class InMemorySpendEntryRepository implements SpendEntryRepository {
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override
-    public List<SpendEntry> findAll() {
-        return new ArrayList<>(storage.values());
+    public List<SpendEntry> findAllByUserId(Long userId) {
+        return storage.values().stream()
+                .filter(entry -> userId.equals(entry.getUserId()))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public Optional<SpendEntry> findById(Long id) {
-        return Optional.ofNullable(storage.get(id));
+    public Optional<SpendEntry> findByIdAndUserId(Long id, Long userId) {
+        return Optional.ofNullable(storage.get(id))
+                .filter(entry -> userId.equals(entry.getUserId()));
     }
 
     @Override
@@ -34,12 +37,12 @@ public class InMemorySpendEntryRepository implements SpendEntryRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        storage.remove(id);
+    public void deleteByIdAndUserId(Long id, Long userId) {
+        findByIdAndUserId(id, userId).ifPresent(entry -> storage.remove(entry.getId()));
     }
 
     @Override
-    public void deleteAll() {
-        storage.clear();
+    public void deleteAllByUserId(Long userId) {
+        storage.values().removeIf(entry -> userId.equals(entry.getUserId()));
     }
 }

@@ -15,13 +15,16 @@ public class InMemoryBudgetRepository implements BudgetRepository {
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override
-    public List<Budget> findAll() {
-        return new ArrayList<>(storage.values());
+    public List<Budget> findAllByUserId(Long userId) {
+        return storage.values().stream()
+                .filter(budget -> userId.equals(budget.getUserId()))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public Optional<Budget> findById(Long id) {
-        return Optional.ofNullable(storage.get(id));
+    public Optional<Budget> findByIdAndUserId(Long id, Long userId) {
+        return Optional.ofNullable(storage.get(id))
+                .filter(budget -> userId.equals(budget.getUserId()));
     }
 
     @Override
@@ -34,7 +37,7 @@ public class InMemoryBudgetRepository implements BudgetRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-        storage.remove(id);
+    public void deleteByIdAndUserId(Long id, Long userId) {
+        findByIdAndUserId(id, userId).ifPresent(budget -> storage.remove(budget.getId()));
     }
 }

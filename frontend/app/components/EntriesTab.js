@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import { useState } from 'react';
-import { fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
+import { apiRequest, fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
 
 const emptyForm = () => ({
   description: '',
@@ -36,9 +36,8 @@ export default function EntriesTab() {
       date: form.date || today(),
     };
 
-    await fetch('/api/entries', {
+    await apiRequest('/api/entries', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
@@ -47,7 +46,7 @@ export default function EntriesTab() {
   };
 
   const deleteEntry = async (id) => {
-    await fetch(`/api/entries/${id}`, { method: 'DELETE' });
+    await apiRequest(`/api/entries/${id}`, { method: 'DELETE' });
     mutate();
   };
 

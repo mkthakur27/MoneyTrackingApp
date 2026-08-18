@@ -1,8 +1,11 @@
 package com.moneytrackingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 
 public class Profile {
+    @JsonIgnore
+    private Long userId;
 
     @NotBlank(message = "Currency code is required")
     private String currencyCode = "USD";
@@ -11,6 +14,14 @@ public class Profile {
     private String currencySymbol = "$";
 
     public Profile() {
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCurrencyCode() {

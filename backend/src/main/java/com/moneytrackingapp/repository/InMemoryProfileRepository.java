@@ -3,18 +3,21 @@ package com.moneytrackingapp.repository;
 import com.moneytrackingapp.model.Profile;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Repository
 public class InMemoryProfileRepository implements ProfileRepository {
-    private volatile Profile profile = new Profile();
+    private final ConcurrentHashMap<Long, Profile> storage = new ConcurrentHashMap<>();
 
     @Override
-    public Profile get() {
-        return profile;
+    public Optional<Profile> findByUserId(Long userId) {
+        return Optional.ofNullable(storage.get(userId));
     }
 
     @Override
     public Profile save(Profile profile) {
-        this.profile = profile;
-        return this.profile;
+        storage.put(profile.getUserId(), profile);
+        return profile;
     }
 }

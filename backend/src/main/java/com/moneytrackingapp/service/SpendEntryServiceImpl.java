@@ -1,7 +1,9 @@
 package com.moneytrackingapp.service;
 
+import com.moneytrackingapp.exception.ResourceNotFoundException;
 import com.moneytrackingapp.model.SpendEntry;
 import com.moneytrackingapp.repository.SpendEntryRepository;
+import com.moneytrackingapp.security.CurrentUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,24 +11,28 @@ import java.util.List;
 @Service
 public class SpendEntryServiceImpl implements SpendEntryService {
     private final SpendEntryRepository repository;
+    private final CurrentUser currentUser;
 
-    public SpendEntryServiceImpl(SpendEntryRepository repository) {
+    public SpendEntryServiceImpl(SpendEntryRepository repository, CurrentUser currentUser) {
         this.repository = repository;
+        this.currentUser = currentUser;
     }
 
     @Override
     public List<SpendEntry> listAllEntries() {
-        return repository.findAll();
+        return repository.findAllByUserId(currentUser.requireUserId());
     }
 
     @Override
     public SpendEntry createEntry(SpendEntry spendEntry) {
+        spendEntry.setUserId(currentUser.requireUserId());
         return repository.save(spendEntry);
     }
 
     @Override
     public SpendEntry updateEntry(Long id, SpendEntry spendEntry) {
-        return repository.findById(id)
+        Long userId = currentUser.requireUserId();
+        return repository.findByIdAndUserId(id, userId)
                 .map(existing -> {
                     existing.setDescription(spendEntry.getDescription());
                     existing.setCategory(spendEntry.getCategory());
@@ -35,16 +41,19 @@ public class SpendEntryServiceImpl implements SpendEntryService {
                     existing.setNote(spendEntry.getNote());
                     return repository.save(existing);
                 })
-                .orElseThrow(() -> new IllegalArgumentException("Entry not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Entry not found: " + id));
     }
 
     @Override
     public void deleteEntry(Long id) {
-        repository.deleteById(id);
+        Long userId = currentUser.requireUserId();
+        SpendEntry existing = repository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Entry not found: " + id));
+        repository.deleteByIdAndUserId(existing.getId(), userId);
     }
 
     @Override
     public void deleteAllEntries() {
-        repository.deleteAll();
+        repository.deleteAllByUserId(currentUser.requireUserId());
     }
 }

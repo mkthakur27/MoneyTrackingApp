@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SpendEntryRepository {
-    List<SpendEntry> findAll();
-    Optional<SpendEntry> findById(Long id);
+    List<SpendEntry> findAllByUserId(Long userId);
+    Optional<SpendEntry> findByIdAndUserId(Long id, Long userId);
     SpendEntry save(SpendEntry spendEntry);
-    void deleteById(Long id);
-    void deleteAll();
+    void deleteByIdAndUserId(Long id, Long userId);
+    void deleteAllByUserId(Long userId);
 }

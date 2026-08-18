@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RecurringExpenseRepository {
-    List<RecurringExpense> findAll();
-    Optional<RecurringExpense> findById(Long id);
+    List<RecurringExpense> findAllByUserId(Long userId);
+    Optional<RecurringExpense> findByIdAndUserId(Long id, Long userId);
     RecurringExpense save(RecurringExpense recurringExpense);
-    void deleteById(Long id);
+    void deleteByIdAndUserId(Long id, Long userId);
 }

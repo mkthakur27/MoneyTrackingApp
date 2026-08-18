@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import { useState } from 'react';
-import { fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
+import { apiRequest, fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
 
 const emptyForm = () => ({
   description: '',
@@ -32,9 +32,8 @@ export default function RecurringTab() {
       setError('Please enter description and amount.');
       return;
     }
-    await fetch('/api/recurring', {
+    await apiRequest('/api/recurring', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, amount: parseFloat(form.amount) }),
     });
     setForm(emptyForm());
@@ -42,15 +41,14 @@ export default function RecurringTab() {
   };
 
   const deleteRecurring = async (id) => {
-    await fetch(`/api/recurring/${id}`, { method: 'DELETE' });
+    await apiRequest(`/api/recurring/${id}`, { method: 'DELETE' });
     mutate();
   };
 
   const logAsEntry = async (item) => {
     setMessage('');
-    await fetch('/api/entries', {
+    await apiRequest('/api/entries', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         description: item.description,
         category: item.category,
