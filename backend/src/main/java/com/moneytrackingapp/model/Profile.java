@@ -1,5 +1,6 @@
 package com.moneytrackingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,10 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(name = "profiles")
 public class Profile {
-    public static final long SINGLETON_ID = 1L;
-
     @Id
-    private Long id = SINGLETON_ID;
+    @JsonIgnore
+    @Column(name = "user_id")
+    private Long userId;
 
     @NotBlank(message = "Currency code is required")
     @Column(name = "currency_code", nullable = false, length = 3)
@@ -25,12 +26,12 @@ public class Profile {
     public Profile() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCurrencyCode() {

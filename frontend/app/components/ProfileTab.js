@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import { useEffect, useState } from 'react';
-import { fetcher, currencyPresets } from '../lib/api';
+import { apiRequest, fetcher, currencyPresets } from '../lib/api';
 
 export default function ProfileTab() {
   const { data: profile, mutate } = useSWR('/api/profile', fetcher);
@@ -29,9 +29,8 @@ export default function ProfileTab() {
 
   const save = async () => {
     setMessage('');
-    await fetch('/api/profile', {
+    await apiRequest('/api/profile', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     });
     mutate();

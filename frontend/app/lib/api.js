@@ -1,12 +1,48 @@
 import useSWR from 'swr';
 
+export const AUTH_TOKEN_KEY = 'authToken';
+
+export function getToken() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  return sessionStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+export function setToken(token) {
+  sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+}
+
+export function clearToken() {
+  sessionStorage.removeItem(AUTH_TOKEN_KEY);
+}
+
+export function authHeaders(extra = {}) {
+  const token = getToken();
+  return {
+    ...extra,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 export const fetcher = (url) =>
-  fetch(url).then((res) => {
+  fetch(url, { headers: authHeaders() }).then((res) => {
     if (!res.ok) {
       throw new Error(`Request failed: ${res.status}`);
     }
     return res.json();
   });
+
+export function apiRequest(url, options = {}) {
+  const { headers, ...rest } = options;
+  return fetch(url, {
+    ...rest,
+    headers: authHeaders({
+      'Content-Type': 'application/json',
+      ...(headers || {}),
+    }),
+  });
+}
 
 export const categories = ['Food', 'Transport', 'Utilities', 'Shopping', 'Health', 'Other'];
 
@@ -101,4 +137,8 @@ export function isInCurrentWeek(dateStr) {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 7);
   return entryDate >= weekStart && entryDate < weekEnd;
+}
+
+export function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '');
 }

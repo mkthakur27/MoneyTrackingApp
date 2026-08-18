@@ -83,7 +83,6 @@ export default function EntriesTab() {
     try {
       await apiRequest(editingId ? `/api/entries/${editingId}` : '/api/entries', {
         method: editingId ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       setMessage(editingId ? 'Expense updated successfully.' : 'Expense added successfully.');

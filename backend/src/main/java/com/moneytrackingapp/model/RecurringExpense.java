@@ -1,5 +1,6 @@
 package com.moneytrackingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,10 @@ public class RecurringExpense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JsonIgnore
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @NotBlank(message = "Description is required")
     @Column(nullable = false, length = 255)
@@ -47,6 +52,14 @@ public class RecurringExpense {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getDescription() {

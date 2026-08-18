@@ -3,6 +3,7 @@
 import useSWR from 'swr';
 import { useState } from 'react';
 import {
+  apiRequest,
   fetcher,
   categories,
   categoryLabel,
@@ -30,9 +31,8 @@ export default function BudgetsTab() {
       setError('Please enter a budget amount.');
       return;
     }
-    await fetch('/api/budgets', {
+    await apiRequest('/api/budgets', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, amount: parseFloat(form.amount) }),
     });
     setForm(emptyForm());
@@ -40,7 +40,7 @@ export default function BudgetsTab() {
   };
 
   const deleteBudget = async (id) => {
-    await fetch(`/api/budgets/${id}`, { method: 'DELETE' });
+    await apiRequest(`/api/budgets/${id}`, { method: 'DELETE' });
     mutate();
   };
 

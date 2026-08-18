@@ -6,9 +6,15 @@ export default async function handler(req, res) {
   const search = queryIndex >= 0 ? req.url.slice(queryIndex) : '';
   const url = `${backendUrl}/api/${path.join('/')}${search}`;
 
+  const headers = { 'Content-Type': 'application/json' };
+  const authorization = req.headers.authorization;
+  if (authorization) {
+    headers.Authorization = authorization;
+  }
+
   const init = {
     method: req.method,
-    headers: { 'Content-Type': 'application/json' },
+    headers,
   };
 
   if (req.method !== 'GET' && req.method !== 'DELETE' && req.body) {
