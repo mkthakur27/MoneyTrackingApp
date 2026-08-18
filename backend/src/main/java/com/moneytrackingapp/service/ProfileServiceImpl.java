@@ -4,6 +4,7 @@ import com.moneytrackingapp.model.Profile;
 import com.moneytrackingapp.repository.ProfileRepository;
 import com.moneytrackingapp.security.CurrentUser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
@@ -16,9 +17,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional
     public Profile getProfile() {
         Long userId = currentUser.requireUserId();
-        return repository.findByUserId(userId).orElseGet(() -> {
+        return repository.findById(userId).orElseGet(() -> {
             Profile profile = new Profile();
             profile.setUserId(userId);
             return repository.save(profile);
@@ -26,9 +28,10 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
+    @Transactional
     public Profile updateProfile(Profile profile) {
         Long userId = currentUser.requireUserId();
-        Profile existing = repository.findByUserId(userId).orElseGet(Profile::new);
+        Profile existing = repository.findById(userId).orElseGet(Profile::new);
         existing.setUserId(userId);
         existing.setCurrencyCode(profile.getCurrencyCode());
         existing.setCurrencySymbol(profile.getCurrencySymbol());

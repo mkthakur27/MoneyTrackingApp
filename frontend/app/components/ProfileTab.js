@@ -40,7 +40,7 @@ export default function ProfileTab() {
   return (
     <div className="stack">
       <section className="card">
-        <h2>Profile Settings</h2>
+        <h2>⚙️ Profile Settings</h2>
         <p className="muted">Set your currency denomination. It is used across the whole app.</p>
         <div className="form-grid">
           <label>
@@ -80,7 +80,7 @@ export default function ProfileTab() {
       </section>
 
       <section className="card">
-        <h2>Preview</h2>
+        <h2>👀 Currency Preview</h2>
         <p>
           Amounts will look like:{' '}
           <strong>

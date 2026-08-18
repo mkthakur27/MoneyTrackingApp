@@ -10,11 +10,11 @@ import ProfileTab from './components/ProfileTab';
 import { clearToken, getToken } from './lib/api';
 
 const tabs = [
-  { id: 'entries', label: 'Entries' },
-  { id: 'reports', label: 'Reports' },
-  { id: 'budgets', label: 'Budgets' },
-  { id: 'recurring', label: 'Recurring' },
-  { id: 'profile', label: 'Profile' },
+  { id: 'entries', icon: '🧾', label: 'Expenses' },
+  { id: 'reports', icon: '📊', label: 'Reports' },
+  { id: 'budgets', icon: '🎯', label: 'Budgets' },
+  { id: 'recurring', icon: '🔁', label: 'Recurring' },
+  { id: 'profile', icon: '⚙️', label: 'Profile' },
 ];
 
 export default function Home() {
@@ -44,8 +44,10 @@ export default function Home() {
       <header className="app-header">
         <div className="header-row">
           <div>
+            <div className="brand-mark" aria-hidden="true">💰</div>
+            <p className="eyebrow">Your personal finance space</p>
             <h1>Money Tracking App</h1>
-            <p>Track spending, set budgets, and review your reports.</p>
+            <p>Track spending, set budgets, and understand where your money goes.</p>
           </div>
           <button type="button" className="ghost" onClick={logout}>
             Log out
@@ -53,15 +55,17 @@ export default function Home() {
         </div>
       </header>
 
-      <nav className="tab-bar">
+      <nav className="tab-bar" aria-label="Main navigation">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             className={`tab ${active === tab.id ? 'active' : ''}`}
             onClick={() => setActive(tab.id)}
+            aria-current={active === tab.id ? 'page' : undefined}
           >
-            {tab.label}
+            <span aria-hidden="true">{tab.icon}</span>
+            <span>{tab.label}</span>
           </button>
         ))}
       </nav>

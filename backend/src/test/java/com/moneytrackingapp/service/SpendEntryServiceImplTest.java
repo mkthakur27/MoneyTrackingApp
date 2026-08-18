@@ -40,13 +40,13 @@ class SpendEntryServiceImplTest {
     @Test
     void listAllEntriesUsesCurrentUserId() {
         SpendEntry entry = ownedEntry();
-        when(repository.findAllByUserId(1L)).thenReturn(List.of(entry));
+        when(repository.findAllByUserIdOrderByDateDescIdDesc(1L)).thenReturn(List.of(entry));
 
         List<SpendEntry> result = service.listAllEntries();
 
         assertEquals(1, result.size());
         assertEquals(1L, result.get(0).getUserId());
-        verify(repository).findAllByUserId(1L);
+        verify(repository).findAllByUserIdOrderByDateDescIdDesc(1L);
     }
 
     @Test

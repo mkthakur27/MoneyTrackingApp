@@ -5,6 +5,7 @@ import com.moneytrackingapp.model.Budget;
 import com.moneytrackingapp.repository.BudgetRepository;
 import com.moneytrackingapp.security.CurrentUser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,17 +20,20 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Budget> listAllBudgets() {
-        return repository.findAllByUserId(currentUser.requireUserId());
+        return repository.findAllByUserIdOrderByIdAsc(currentUser.requireUserId());
     }
 
     @Override
+    @Transactional
     public Budget createBudget(Budget budget) {
         budget.setUserId(currentUser.requireUserId());
         return repository.save(budget);
     }
 
     @Override
+    @Transactional
     public Budget updateBudget(Long id, Budget budget) {
         Long userId = currentUser.requireUserId();
         return repository.findByIdAndUserId(id, userId)
@@ -43,10 +47,11 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
+    @Transactional
     public void deleteBudget(Long id) {
         Long userId = currentUser.requireUserId();
         Budget existing = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Budget not found: " + id));
-        repository.deleteByIdAndUserId(existing.getId(), userId);
+        repository.delete(existing);
     }
 }

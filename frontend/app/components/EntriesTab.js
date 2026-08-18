@@ -2,7 +2,15 @@
 
 import useSWR from 'swr';
 import { useState } from 'react';
-import { apiRequest, fetcher, categories, formatMoney, today, useCurrencySymbol } from '../lib/api';
+import {
+  apiRequest,
+  categoryLabel,
+  fetcher,
+  categories,
+  formatMoney,
+  today,
+  useCurrencySymbol,
+} from '../lib/api';
 
 const emptyForm = () => ({
   description: '',
@@ -20,34 +28,93 @@ export default function EntriesTab() {
 
   const [form, setForm] = useState(emptyForm());
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [busy, setBusy] = useState(false);
 
   const change = (field) => (event) => setForm({ ...form, [field]: event.target.value });
 
-  const createEntry = async () => {
+  const resetForm = () => {
+    setForm(emptyForm());
+    setEditingId(null);
+  };
+
+  const startEdit = (entry) => {
+    setEditingId(entry.id);
+    setForm({
+      description: entry.description || '',
+      category: entry.category || categories[0],
+      amount: String(entry.amount ?? ''),
+      date: entry.date || today(),
+      note: entry.note || '',
+    });
     setError('');
-    if (!form.description || !form.amount) {
-      setError('Please enter description and amount.');
+    setMessage('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const saveEntry = async () => {
+    setError('');
+    setMessage('');
+    const amount = Number(form.amount);
+
+    if (!form.description.trim()) {
+      setError('Please enter a description.');
+      return;
+    }
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setError('Amount must be greater than zero.');
+      return;
+    }
+    if (!form.date) {
+      setError('Please select an expense date.');
       return;
     }
 
     const payload = {
       ...form,
-      amount: parseFloat(form.amount),
-      date: form.date || today(),
+      description: form.description.trim(),
+      amount,
+      date: form.date,
+      note: form.note.trim(),
     };
 
-    await apiRequest('/api/entries', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-
-    setForm(emptyForm());
-    mutate();
+    setBusy(true);
+    try {
+      await apiRequest(editingId ? `/api/entries/${editingId}` : '/api/entries', {
+        method: editingId ? 'PUT' : 'POST',
+        body: JSON.stringify(payload),
+      });
+      setMessage(editingId ? 'Expense updated successfully.' : 'Expense added successfully.');
+      resetForm();
+      await mutate();
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const deleteEntry = async (id) => {
-    await apiRequest(`/api/entries/${id}`, { method: 'DELETE' });
-    mutate();
+  const deleteEntry = async (entry) => {
+    if (!window.confirm(`Delete "${entry.description}"? This cannot be undone.`)) {
+      return;
+    }
+
+    setError('');
+    setMessage('');
+    setBusy(true);
+    try {
+      await apiRequest(`/api/entries/${entry.id}`, { method: 'DELETE' });
+      if (editingId === entry.id) {
+        resetForm();
+      }
+      setMessage('Expense deleted.');
+      await mutate();
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const total = entries.reduce((sum, entry) => sum + parseFloat(entry.amount || 0), 0);
@@ -55,8 +122,16 @@ export default function EntriesTab() {
 
   return (
     <div className="stack">
-      <section className="card">
-        <h2>Add a Spend Entry</h2>
+      <section className={`card ${editingId ? 'editing-card' : ''}`}>
+        <div className="section-header">
+          <div>
+            <h2>{editingId ? '✏️ Edit Expense' : '➕ Add an Expense'}</h2>
+            <p className="muted">
+              {editingId ? 'Update the details and save your changes.' : 'Record a new expense in a few seconds.'}
+            </p>
+          </div>
+          {editingId && <span className="pill">Editing</span>}
+        </div>
         <div className="form-grid">
           <label>
             Description
@@ -71,7 +146,7 @@ export default function EntriesTab() {
             <select value={form.category} onChange={change('category')}>
               {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category}
+                  {categoryLabel(category)}
                 </option>
               ))}
             </select>
@@ -100,15 +175,23 @@ export default function EntriesTab() {
             />
           </label>
         </div>
-        <button type="button" onClick={createEntry}>
-          Add Spend
-        </button>
+        <div className="form-actions">
+          <button type="button" onClick={saveEntry} disabled={busy}>
+            {busy ? 'Saving…' : editingId ? 'Save Changes' : 'Add Expense'}
+          </button>
+          {editingId && (
+            <button type="button" className="secondary" onClick={resetForm} disabled={busy}>
+              Cancel
+            </button>
+          )}
+        </div>
         {error && <p className="error">{error}</p>}
+        {message && <p className="success">{message}</p>}
       </section>
 
       <section className="card">
         <div className="section-header">
-          <h2>Spend History</h2>
+          <h2>📋 Expense History</h2>
           <span className="pill">Total: {formatMoney(symbol, total)}</span>
         </div>
         {isLoading ? (
@@ -118,18 +201,22 @@ export default function EntriesTab() {
         ) : (
           <ul className="entry-list">
             {sorted.map((entry) => (
-              <li key={entry.id} className="entry-item">
+              <li key={entry.id} className={`entry-item ${editingId === entry.id ? 'editing' : ''}`}>
                 <div className="entry-main">
                   <strong>{entry.description}</strong>
                   <p className="muted">
-                    {entry.category} • {entry.date}
+                    <span className="category-badge">{categoryLabel(entry.category)}</span>
+                    <span> • {entry.date}</span>
                   </p>
                   {entry.note && <p className="note">{entry.note}</p>}
                 </div>
                 <div className="entry-right">
                   <span className="amount">{formatMoney(symbol, entry.amount)}</span>
-                  <button className="ghost" onClick={() => deleteEntry(entry.id)}>
-                    Delete
+                  <button className="secondary compact" onClick={() => startEdit(entry)} disabled={busy}>
+                    ✏️ Edit
+                  </button>
+                  <button className="danger compact" onClick={() => deleteEntry(entry)} disabled={busy}>
+                    🗑️ Delete
                   </button>
                 </div>
               </li>

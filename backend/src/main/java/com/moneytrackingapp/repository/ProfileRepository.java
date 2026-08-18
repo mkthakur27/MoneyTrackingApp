@@ -1,9 +1,7 @@
 package com.moneytrackingapp.repository;
 
 import com.moneytrackingapp.model.Profile;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProfileRepository {
-    Optional<Profile> findByUserId(Long userId);
-    Profile save(Profile profile);
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
 }

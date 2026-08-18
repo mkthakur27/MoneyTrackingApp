@@ -40,13 +40,13 @@ class BudgetServiceImplTest {
     @Test
     void listAllBudgetsUsesCurrentUserId() {
         Budget budget = ownedBudget();
-        when(repository.findAllByUserId(1L)).thenReturn(List.of(budget));
+        when(repository.findAllByUserIdOrderByIdAsc(1L)).thenReturn(List.of(budget));
 
         List<Budget> result = service.listAllBudgets();
 
         assertEquals(1, result.size());
         assertEquals(1L, result.get(0).getUserId());
-        verify(repository).findAllByUserId(1L);
+        verify(repository).findAllByUserIdOrderByIdAsc(1L);
     }
 
     @Test

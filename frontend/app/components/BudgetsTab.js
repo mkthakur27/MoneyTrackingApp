@@ -6,6 +6,7 @@ import {
   apiRequest,
   fetcher,
   categories,
+  categoryLabel,
   formatMoney,
   isInCurrentMonth,
   isInCurrentWeek,
@@ -53,14 +54,14 @@ export default function BudgetsTab() {
   return (
     <div className="stack">
       <section className="card">
-        <h2>Set a Category Budget</h2>
+        <h2>🎯 Set a Category Budget</h2>
         <div className="form-grid">
           <label>
             Category
             <select value={form.category} onChange={change('category')}>
               {categories.map((category) => (
                 <option key={category} value={category}>
-                  {category}
+                  {categoryLabel(category)}
                 </option>
               ))}
             </select>
@@ -90,7 +91,7 @@ export default function BudgetsTab() {
       </section>
 
       <section className="card">
-        <h2>Budgets</h2>
+        <h2>📌 Your Budgets</h2>
         {budgets.length === 0 ? (
           <p className="muted">No budgets set yet.</p>
         ) : (
@@ -104,7 +105,7 @@ export default function BudgetsTab() {
                 <div key={budget.id} className="bar-row">
                   <div className="bar-label">
                     <span>
-                      {budget.category}{' '}
+                      {categoryLabel(budget.category)}{' '}
                       <span className="muted">({budget.period.toLowerCase()})</span>
                     </span>
                     <span className={over ? 'amount over' : 'amount'}>
@@ -123,8 +124,8 @@ export default function BudgetsTab() {
                         ? `Over by ${formatMoney(symbol, spent - limit)}`
                         : `${formatMoney(symbol, limit - spent)} left`}
                     </span>
-                    <button className="ghost" onClick={() => deleteBudget(budget.id)}>
-                      Delete
+                    <button className="danger compact" onClick={() => deleteBudget(budget.id)}>
+                      🗑️ Delete
                     </button>
                   </div>
                 </div>

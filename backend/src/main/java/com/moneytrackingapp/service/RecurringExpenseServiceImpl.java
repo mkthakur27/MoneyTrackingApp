@@ -5,6 +5,7 @@ import com.moneytrackingapp.model.RecurringExpense;
 import com.moneytrackingapp.repository.RecurringExpenseRepository;
 import com.moneytrackingapp.security.CurrentUser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,17 +20,20 @@ public class RecurringExpenseServiceImpl implements RecurringExpenseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RecurringExpense> listAllRecurringExpenses() {
-        return repository.findAllByUserId(currentUser.requireUserId());
+        return repository.findAllByUserIdOrderByIdAsc(currentUser.requireUserId());
     }
 
     @Override
+    @Transactional
     public RecurringExpense createRecurringExpense(RecurringExpense recurringExpense) {
         recurringExpense.setUserId(currentUser.requireUserId());
         return repository.save(recurringExpense);
     }
 
     @Override
+    @Transactional
     public RecurringExpense updateRecurringExpense(Long id, RecurringExpense recurringExpense) {
         Long userId = currentUser.requireUserId();
         return repository.findByIdAndUserId(id, userId)
@@ -45,10 +49,11 @@ public class RecurringExpenseServiceImpl implements RecurringExpenseService {
     }
 
     @Override
+    @Transactional
     public void deleteRecurringExpense(Long id) {
         Long userId = currentUser.requireUserId();
         RecurringExpense existing = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recurring expense not found: " + id));
-        repository.deleteByIdAndUserId(existing.getId(), userId);
+        repository.delete(existing);
     }
 }

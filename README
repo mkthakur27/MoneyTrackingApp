@@ -4,26 +4,45 @@ A simple money tracking application with a Next.js frontend and a Java Spring Bo
 
 ## Features
 
-- Track spend entries with description, category, amount, date, and notes
+- Create, edit, and delete spend entries with description, category, amount, date, and notes
 - Basic categories included: Food, Transport, Utilities, Shopping, Health, Other
 - Profile-level currency denomination (symbol + code) used across the app
 - Reports tab: category-wise and month-wise expenditure with bar charts
 - Budgets: set a monthly or weekly budget per category and track spend against it
 - Recurring/default expenses: define monthly or weekly defaults and log them in one click
-- In-memory backend storage (no database required)
-- Tabbed, mobile-responsive frontend UI
+- PostgreSQL persistence through Docker Compose
+- Polished, emoji-enhanced, mobile-responsive tabbed UI
 - Clean backend architecture with model, repository, and service layers
+
+## PostgreSQL
+
+The app uses PostgreSQL for profiles, expenses, budgets, and recurring expenses. Data is kept in a named Docker volume and remains available after container or backend restarts.
+
+Install and start Docker Desktop first. Then, from the project root, start the database:
+
+```bash
+copy .env.example .env
+# Replace POSTGRES_PASSWORD in .env with a strong local password
+docker compose up -d postgres
+```
+
+The root `.env` file is ignored by Git and supplies PostgreSQL settings to Docker Compose and Spring Boot. Never commit it. Keep `.env.example` as the safe configuration template.
+
+For the PostgreSQL MCP server, set `POSTGRES_MCP_URL` as a user environment variable and restart Cursor. The MCP configuration does not contain the password.
+
+Hibernate creates and updates the development schema automatically using `spring.jpa.hibernate.ddl-auto=update`.
 
 ## Backend
 
 ### Run backend
 
-1. Open a terminal in `backend`
-2. Run:
+1. Start PostgreSQL as described above.
+2. Open a terminal in `backend`.
+3. Run:
    ```bash
    mvn clean spring-boot:run
    ```
-3. Backend starts on `http://localhost:8080`
+4. Backend starts on `http://localhost:8080`.
 
 ### Swagger / OpenAPI
 
@@ -79,5 +98,5 @@ Recurring / default expenses:
 ## Notes
 
 - The frontend proxies API requests to the backend using `BACKEND_URL` if needed.
-- No database is used, so all entries reset when the backend restarts.
-
+- Use the Edit and Delete actions in Expense History to maintain an existing expense.
+- To remove all local PostgreSQL data and start fresh, run `docker compose down -v`.
