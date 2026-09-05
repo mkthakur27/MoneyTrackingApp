@@ -33,17 +33,6 @@ export const fetcher = (url) =>
     return res.json();
   });
 
-export function apiRequest(url, options = {}) {
-  const { headers, ...rest } = options;
-  return fetch(url, {
-    ...rest,
-    headers: authHeaders({
-      'Content-Type': 'application/json',
-      ...(headers || {}),
-    }),
-  });
-}
-
 export const categories = ['Food', 'Transport', 'Utilities', 'Shopping', 'Health', 'Other'];
 
 export const categoryEmojis = {
@@ -55,12 +44,32 @@ export const categoryEmojis = {
   Other: '📦',
 };
 
+export const categoryColors = {
+  Food: '#f97316',
+  Transport: '#2563eb',
+  Utilities: '#ca8a04',
+  Shopping: '#a855f7',
+  Health: '#16a34a',
+  Other: '#64748b',
+};
+
 export function categoryLabel(category) {
   return `${categoryEmojis[category] || '💸'} ${category}`;
 }
 
+export function categoryColor(category) {
+  return categoryColors[category] || '#0ea5e9';
+}
+
 export async function apiRequest(url, options = {}) {
-  const response = await fetch(url, options);
+  const { headers, ...rest } = options;
+  const response = await fetch(url, {
+    ...rest,
+    headers: authHeaders({
+      'Content-Type': 'application/json',
+      ...(headers || {}),
+    }),
+  });
   const text = await response.text();
   let data = null;
 
@@ -126,8 +135,24 @@ export function startOfWeek(date = new Date()) {
   return d;
 }
 
+export function isInMonth(dateStr, key) {
+  return Boolean(key) && monthKey(dateStr) === key;
+}
+
 export function isInCurrentMonth(dateStr) {
-  return monthKey(dateStr) === monthKey(today());
+  return isInMonth(dateStr, monthKey(today()));
+}
+
+export function budgetMonthOptions(entries, extraKeys = []) {
+  const keys = new Set((extraKeys || []).filter(Boolean));
+  keys.add(monthKey(today()));
+  (entries || []).forEach((entry) => {
+    const key = monthKey(entry.date);
+    if (key) {
+      keys.add(key);
+    }
+  });
+  return [...keys].sort((a, b) => (a < b ? 1 : -1));
 }
 
 export function isInCurrentWeek(dateStr) {

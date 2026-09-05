@@ -42,17 +42,17 @@ export default function Home() {
   return (
     <main className="page-container">
       <header className="app-header">
-        <div className="header-row">
+        <div className="header-brand">
+          <div className="brand-mark" aria-hidden="true">💰</div>
           <div>
-            <div className="brand-mark" aria-hidden="true">💰</div>
             <p className="eyebrow">Your personal finance space</p>
             <h1>Money Tracking App</h1>
             <p>Track spending, set budgets, and understand where your money goes.</p>
           </div>
-          <button type="button" className="ghost" onClick={logout}>
-            Log out
-          </button>
         </div>
+        <button type="button" className="ghost header-logout" onClick={logout}>
+          Log out
+        </button>
       </header>
 
       <nav className="tab-bar" aria-label="Main navigation">
