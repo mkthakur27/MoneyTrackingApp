@@ -1,6 +1,6 @@
 'use client';
 
-import useSWR from 'swr';
+import useSWR, { mutate as mutateCache } from 'swr';
 import { useState } from 'react';
 import {
   apiRequest,
@@ -18,6 +18,8 @@ const emptyForm = () => ({
   amount: '',
   date: today(),
   note: '',
+  recurring: false,
+  period: 'MONTHLY',
 });
 
 export default function EntriesTab() {
@@ -47,6 +49,8 @@ export default function EntriesTab() {
       amount: String(entry.amount ?? ''),
       date: entry.date || today(),
       note: entry.note || '',
+      recurring: false,
+      period: 'MONTHLY',
     });
     setError('');
     setMessage('');
@@ -72,8 +76,8 @@ export default function EntriesTab() {
     }
 
     const payload = {
-      ...form,
       description: form.description.trim(),
+      category: form.category,
       amount,
       date: form.date,
       note: form.note.trim(),
@@ -85,7 +89,31 @@ export default function EntriesTab() {
         method: editingId ? 'PUT' : 'POST',
         body: JSON.stringify(payload),
       });
-      setMessage(editingId ? 'Expense updated successfully.' : 'Expense added successfully.');
+
+      if (!editingId && form.recurring) {
+        try {
+          await apiRequest('/api/recurring', {
+            method: 'POST',
+            body: JSON.stringify({
+              description: payload.description,
+              category: payload.category,
+              amount: payload.amount,
+              period: form.period,
+              note: payload.note,
+            }),
+          });
+          await mutateCache('/api/recurring');
+          setMessage(
+            `Expense added and saved as a ${form.period.toLowerCase()} recurring expense.`
+          );
+        } catch (recurringError) {
+          setMessage('Expense added, but it could not be saved as recurring.');
+          setError(recurringError.message);
+        }
+      } else {
+        setMessage(editingId ? 'Expense updated successfully.' : 'Expense added successfully.');
+      }
+
       resetForm();
       await mutate();
     } catch (requestError) {
@@ -174,6 +202,27 @@ export default function EntriesTab() {
               rows={2}
             />
           </label>
+          {!editingId && (
+            <>
+              <label className="checkbox-field full-width">
+                <input
+                  type="checkbox"
+                  checked={form.recurring}
+                  onChange={(event) => setForm({ ...form, recurring: event.target.checked })}
+                />
+                Save as a recurring expense
+              </label>
+              {form.recurring && (
+                <label>
+                  Repeats
+                  <select value={form.period} onChange={change('period')}>
+                    <option value="MONTHLY">Every month</option>
+                    <option value="WEEKLY">Every week</option>
+                  </select>
+                </label>
+              )}
+            </>
+          )}
         </div>
         <div className="form-actions">
           <button type="button" onClick={saveEntry} disabled={busy}>
