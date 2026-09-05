@@ -14,11 +14,26 @@ A simple money tracking application with a Next.js frontend and a Java Spring Bo
 - Polished, emoji-enhanced, mobile-responsive tabbed UI
 - Clean backend architecture with model, repository, and service layers
 
+## Run with Docker
+
+Install Docker Desktop, copy the env template, set a password, then start the full stack:
+
+```bash
+copy .env.example .env
+# Replace POSTGRES_PASSWORD in .env with a strong local password
+docker compose up --build
+```
+
+- App: `http://localhost:3000`
+- Backend / Swagger: `http://localhost:8080/swagger-ui.html`
+
+Stop with `Ctrl+C`, or `docker compose down`. To wipe the database volume as well, use `docker compose down -v`.
+
 ## PostgreSQL
 
 The app uses PostgreSQL for profiles, expenses, budgets, and recurring expenses. Data is kept in a named Docker volume and remains available after container or backend restarts.
 
-Install and start Docker Desktop first. Then, from the project root, start the database:
+Install and start Docker Desktop first. Then, from the project root, start only the database (for local Maven / `npm run dev`):
 
 ```bash
 copy .env.example .env
